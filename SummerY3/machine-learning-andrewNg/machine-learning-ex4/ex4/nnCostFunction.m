@@ -62,22 +62,34 @@ Theta2_grad = zeros(size(Theta2));
 %               the regularization separately and then add them to Theta1_grad
 %               and Theta2_grad from Part 2.
 %
+X = [ones(m, 1) X];
+a2 = [ones(m, 1) sigmoid(X * Theta1')];
+h = sigmoid(a2*Theta2');
 
+Y_vec = [1 0 0 0; 0 1 0 0; 0 0 1 0; 0 0 0 1];
 
+for i = 1:m
+  J = J + sum(sum((-Y_vec(y(i), :)'.*log(h(i, :)')-(1 .- Y_vec(y(i), :)').*log(1 .- h(i, :)'))) / m); 
+endfor
 
+J = J + (sum(sum(Theta1(:, 2:3).^2)) + sum(sum(Theta2(:, 2:5).^2))) * lambda / (2 * m);
 
+for t = 1:m
+  a_1 = X(t, :)';
+  z_2 = Theta1*a_1;
+  a_2 = [1; sigmoid(z_2)];
+  z_3 = Theta2*a_2;
+  a_3 = sigmoid(z_3);
+  delta_3 = a_3 .- Y_vec(y(t), :)';
+  delta_2 = (Theta2'*delta_3)(2:end).*sigmoidGradient(z_2);
+  Theta1_grad = (Theta1_grad + delta_2 * a_1');
+  Theta2_grad = (Theta2_grad + delta_3 * a_2');
+endfor
 
-
-
-
-
-
-
-
-
-
-
-
+Theta1_grad = Theta1_grad ./ m;
+Theta2_grad = Theta2_grad ./ m;
+Theta1_grad(:, 2:end) = Theta1_grad(:, 2:end) + Theta1(:, 2:end) .* (lambda / m); 
+Theta2_grad(:, 2:end) = Theta2_grad(:, 2:end) + Theta2(:, 2:end) .* (lambda / m); 
 
 
 
@@ -87,6 +99,5 @@ Theta2_grad = zeros(size(Theta2));
 
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
 
 end
