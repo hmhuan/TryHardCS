@@ -53,7 +53,7 @@ fprintf('\n==== Processed Email ====\n\n');
 
 % Process file
 l = 0;
-
+m = size(vocabList) ;
 while ~isempty(email_contents)
 
     % Tokenize and also get rid of any punctuation
@@ -63,7 +63,7 @@ while ~isempty(email_contents)
    
     % Remove any non alphanumeric characters
     str = regexprep(str, '[^a-zA-Z0-9]', '');
-
+    
     % Stem the word 
     % (the porterStemmer sometimes has issues, so we use a try catch block)
     try str = porterStemmer(strtrim(str)); 
@@ -96,11 +96,14 @@ while ~isempty(email_contents)
     % Note: You can use strcmp(str1, str2) to compare two strings (str1 and
     %       str2). It will return 1 only if the two strings are equivalent.
     %
-
-
-
-
-
+    
+    
+    for i = 1:m
+      if (strcmp(vocabList{i}, str) == 1)
+        word_indices = [word_indices ; i];
+        break;
+      endif
+     endfor
 
 
 
